@@ -3,21 +3,36 @@ import { ref, onMounted } from 'vue';
 import headerComponent from './components/header.vue';
 import stockService from './services/stockService.js';
 
-const eintraege = ref([]);
+const stockData = ref([]);
 const loading = ref(true);
 
+
+
+const stocks = [
+  { name: 'Apple', symbol: 'AAPL' },
+  { name: 'Microsoft', symbol: 'MSFT' },
+  { name: 'Alphabet', symbol: 'GOOG' },
+  { name: 'Amazon', symbol: 'AMZN' },
+  { name: 'Tesla', symbol: 'TSLA' },
+  { name: 'Meta Platforms', symbol: 'META' },
+  { name: 'NVIDIA', symbol: 'NVDA' }
+];
+
 onMounted(async () => {
-  console.log('onMounted gestartet');
-  try {
-    const daten = await stockService.getData();
-    console.log('Daten geladen:', daten);
-    eintraege.value = daten;
-  } catch (e) {
-    console.error('Fehler beim Laden:', e);
-  } finally {
-    loading.value = false;
+  const results = [];
+  for (const stock of stocks) {
+    try {
+      const daten = await stockService.getData(stock.symbol);
+      results.push({ symbol: stock.symbol, daten });
+    } catch (e) {
+      console.error(`Fehler beim Laden für ${stock.symbol}:`, e);
+    }
   }
+  stockData.value = results;
+  console.log(stockData.value);
+  loading.value = false;
 });
+
 </script>
 
 <template>
