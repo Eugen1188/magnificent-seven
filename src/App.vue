@@ -1,7 +1,23 @@
 <script setup>
+import { ref, onMounted } from 'vue';
+import headerComponent from './components/header.vue';
+import stockService from './services/stockService.js';
 
-import headerComponent from './components/header.vue'
+const eintraege = ref([]);
+const loading = ref(true);
 
+onMounted(async () => {
+  console.log('onMounted gestartet');
+  try {
+    const daten = await stockService.getData();
+    console.log('Daten geladen:', daten);
+    eintraege.value = daten;
+  } catch (e) {
+    console.error('Fehler beim Laden:', e);
+  } finally {
+    loading.value = false;
+  }
+});
 </script>
 
 <template>
